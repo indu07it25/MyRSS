@@ -28,7 +28,7 @@
 
 		<!--ContentPanel - place additional content here-->
 		<Grid x:Name="ContentGrid" Grid.Row="1">
-			<ListBox Height="646" HorizontalAlignment="Left" Margin="6,0,0,0" Name="lbLatestPosts" VerticalAlignment="Top" Width="474">
+			<ListBox Height="646" HorizontalAlignment="Left" Margin="6,0,0,0" Name="lbLatestPosts" SelectionChanged="lbLatestPosts_SelectionChanged" VerticalAlignment="Top" Width="474">
 
 				<ListBox.ItemTemplate>
 					<DataTemplate>
@@ -43,6 +43,7 @@
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
+			<ProgressBar Height="25" HorizontalAlignment="Left" Margin="6,586,0,0" Name="pgCurrentStatus" Visibility="Collapsed" VerticalAlignment="Top" Width="474" />
 		</Grid>
 	</Grid>
 

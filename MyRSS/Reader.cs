@@ -5,15 +5,19 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
+using System.ServiceModel.Syndication;
+using System.Xml;
 
 
 namespace MyRSS
 {
 	public class Reader
 	{
+		public static int isRunning = 0;
+
 		public void getRSSItems(string url)
 		{
+			isRunning = 1;
 			UriBuilder fullUri = new UriBuilder(url);
 
 			HttpWebRequest rssRequest = (HttpWebRequest)WebRequest.Create(fullUri.Uri);
@@ -45,15 +49,34 @@ namespace MyRSS
 
 				streamResult = rssState.AsyncResponse.GetResponseStream();
 
-				// load the XML
-				XElement xmlPosts = XElement.Load(streamResult);
+				try
+				{
+					// load the XML
+					XmlReader xmlReader = XmlReader.Create(streamResult);
+					SyndicationFeed rssPosts = SyndicationFeed.Load(xmlReader);
+
+					foreach (SyndicationItem sItem in rssPosts.Items)
+					{
+						//Is this item a post?
+						if ((sItem != null) && (sItem.Summary != null) && (sItem.Title != null))
+						{
+							 new Post(sItem.Title.Text, sItem.PublishDate.ToString(), sItem.Summary.Text, sItem.Id);
+						}
+					}
+				}
+
+				catch (FormatException ex)
+				{
+					System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show("Error processing RSS feed."); });
+				}
 			}
 
 			catch (WebException ex)
 			{
-				//Need to invoke a message box here
-				//MessageBox.Show("Unable to load RSS feed. Please check the URL is valid and correct.");
+				System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() => { MessageBox.Show("Unable to load RSS feed. Please check the URL is valid and correct."); });
 			}
+
+			isRunning = 0;
 		}
 	}
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Windows;
+using System.ComponentModel;
 
 namespace MyRSS
 {
@@ -7,6 +8,7 @@ namespace MyRSS
 		private string postTitle;
 		private string postDate;
 		private string postContent;
+		private string postUrl;
 
 		public string PostTitle
 		{
@@ -54,13 +56,31 @@ namespace MyRSS
 			}
 		}
 
+		public string PostURL
+		{
+			get
+			{
+				return postUrl;
+			}
+			set
+			{
+				if (value != postUrl)
+				{
+					postUrl = value;
+				}
+			}
+		}
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public Post(string postTitle, string postDate, string postContent)
+		public Post(string postTitle, string postDate, string postContent, string postUrl)
 		{
 			PostTitle = postTitle;
 			PostDate = postDate;
 			PostContent = postContent;
+			PostURL = postUrl;
+
+			Deployment.Current.Dispatcher.BeginInvoke(() => { LatestPosts.latestPosts.Add(this); }); ;
 		}
 
 		/// <summary>
